@@ -4,16 +4,23 @@ import { useState } from 'react';
 const App = () => {
   const [batdau, setBatdau] = useState(true);
   const [cauhoi, setCauhoi] = useState(false);
+
   const [cauHienTai, setCauHienTai] = useState(null);
+
   const [diemso, setDiemso] = useState(0);
+
   const [cauDaDung, setCauDaDung] = useState([]);
   const [ketthuc, setKetthuc] = useState(false);
+
+  //Tạo bộ câu hỏi
   const bocauhoi = [
     { id: 1, cauhoi: '1+1=3', dapan: 'Sai' },
     { id: 2, cauhoi: '2+2=4', dapan: 'Đúng' },
     { id: 3, cauhoi: '5+5=10', dapan: 'Đúng' },
     { id: 4, cauhoi: '10+10=30', dapan: 'Sai' },
   ];
+
+  //Tạo hàm lấy câu hỏi ngẫu nhiên
   const layCauHoiMoi = () => {
     const cauChuaDung = bocauhoi.filter((cau) => !cauDaDung.includes(cau.id));
 
@@ -32,18 +39,35 @@ const App = () => {
 
     setCauDaDung((prev) => [...prev, cauMoi.id]);
   };
+
+  const Reset = () => {
+    setBatdau(true);
+    setCauhoi(false);
+    setKetthuc(false);
+    setCauDaDung([]);
+    setDiemso(0);
+  };
+
+  //Hàm hiển thị
   const handleShow = () => {
     setBatdau(false);
     setCauhoi(true);
 
     layCauHoiMoi();
   };
+
+  //Hàm kiểm tra đúng sai
   const kiemtra = (dapanNguoiChon) => {
     if (dapanNguoiChon === cauHienTai.dapan) {
       setDiemso((prev) => prev + 1);
+    } else {
+      if (diemso > 0) {
+        setDiemso((prev) => prev - 1);
+      }
     }
     layCauHoiMoi();
   };
+
   return (
     <div class="border-2 p-20">
       {batdau && (
@@ -51,10 +75,14 @@ const App = () => {
           Bắt đầu câu hỏi
         </div>
       )}
+
       {cauhoi && cauHienTai && (
         <div class="flex flex-col gap-20 w-100">
           <div class="text-center"> Điểm số : {diemso} </div>
-          <div class="text-center"> {cauHienTai.cauhoi} </div>
+          <div class="text-center border-2 pt-6 pb-6">
+            {' '}
+            {cauHienTai.cauhoi}{' '}
+          </div>
           <div class="flex flex-row justify-between">
             <div class="border p-2" onClick={() => kiemtra('Đúng')}>
               {' '}
@@ -65,15 +93,19 @@ const App = () => {
               Sai{' '}
             </div>
           </div>
+          <div class="text-center" onClick={() => Reset()}>
+            Quay lại
+          </div>
         </div>
       )}
+
       {ketthuc && (
         <div className="text-center">
           <h1 className="text-3xl font-bold">Kết thúc!</h1>
 
-          <p className="text-xl">
-            Điểm của bạn: {diemso}/{bocauhoi.length}
-          </p>
+          <p className="text-xl">Điểm của bạn: {diemso}</p>
+
+          <p onClick={() => Reset()}>Quay lại</p>
         </div>
       )}
     </div>
