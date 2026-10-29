@@ -1,24 +1,31 @@
-import React from 'react';
 import { useState } from 'react';
+
+type DapAn = 'Đúng' | 'Sai';
+
+type CauHoi = {
+  id: number,
+  cauhoi: string,
+  dapan: DapAn;
+}
+
+const bocauhoi: CauHoi[] = [
+  { id: 1, cauhoi: '1+1=3', dapan: 'Sai' },
+  { id: 2, cauhoi: '2+2=4', dapan: 'Đúng' },
+  { id: 3, cauhoi: '5+5=10', dapan: 'Đúng' },
+  { id: 4, cauhoi: '10+10=30', dapan: 'Sai' },
+];
 
 const App = () => {
   const [batdau, setBatdau] = useState(true);
   const [cauhoi, setCauhoi] = useState(false);
 
-  const [cauHienTai, setCauHienTai] = useState(null);
+  const [cauHienTai, setCauHienTai] = useState<CauHoi | null>(null);
 
   const [diemso, setDiemso] = useState(0);
 
-  const [cauDaDung, setCauDaDung] = useState([]);
-  const [ketthuc, setKetthuc] = useState(false);
+  const [cauDaDung, setCauDaDung] = useState<number[]>([]);
 
-  //Tạo bộ câu hỏi
-  const bocauhoi = [
-    { id: 1, cauhoi: '1+1=3', dapan: 'Sai' },
-    { id: 2, cauhoi: '2+2=4', dapan: 'Đúng' },
-    { id: 3, cauhoi: '5+5=10', dapan: 'Đúng' },
-    { id: 4, cauhoi: '10+10=30', dapan: 'Sai' },
-  ];
+  const [ketthuc, setKetthuc] = useState(false);
 
   //Tạo hàm lấy câu hỏi ngẫu nhiên
   const layCauHoiMoi = () => {
@@ -44,6 +51,7 @@ const App = () => {
     setBatdau(true);
     setCauhoi(false);
     setKetthuc(false);
+    setCauHienTai(null);
     setCauDaDung([]);
     setDiemso(0);
   };
@@ -52,17 +60,18 @@ const App = () => {
   const handleShow = () => {
     setBatdau(false);
     setCauhoi(true);
-
     layCauHoiMoi();
   };
 
   //Hàm kiểm tra đúng sai
-  const kiemtra = (dapanNguoiChon) => {
+  const kiemtra = (dapanNguoiChon: DapAn) => {
+    if (!cauHienTai) return;
+
     if (dapanNguoiChon === cauHienTai.dapan) {
       setDiemso((prev) => prev + 1);
     } else {
       if (diemso > 0) {
-        setDiemso((prev) => prev - 1);
+        setDiemso((prev) => Math.max(0, prev - 1));
       }
     }
     layCauHoiMoi();
